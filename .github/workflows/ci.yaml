@@ -1,0 +1,99 @@
+name: Deploy to production
+
+# Required secrets
+# DOCKERHUB_USER
+# DOCKERHUB_TOKEN
+# DEPLOY_PATH
+# SSH_HOST
+# SSH_USER
+# SSH_KEY
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_COMPOSE_FILES: -f compose.yaml -f compose.prod.yaml
+
+jobs:
+  build:
+    uses: katharinegillis/github-workflows/.github/workflows/ci-build.yml@main
+    with:
+      DOCKER_COMPOSE_FILES: -f compose.yml -f compose.prod.yml
+      DEPLOY_ENVIRONMENT: Production
+    secrets:
+      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  deploy-env:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build the environment file
+        uses: danielr1996/envsubst-action@1.0.0
+        with:
+          input: .env.prod
+          output: .env
+
+      - name: Ensure deploy path exists
+        uses: appleboy/ssh-action@master
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOY_PATH
+          script: mkdir -p $DEPLOY_PATH
+
+      - name: Deploy the environment file
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ".env"
+          target: ${{ secrets.DEPLOY_PATH }}
+
+      - name: Sleep for 10 seconds to reset ssh connections
+        run: sleep 30
+
+  deploy-single:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: ['build', 'deploy-env']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Copy up the deployment files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ".deploy/deploy-single.sh,compose.yaml,compose.prod.yaml"
+          target: ${{ secrets.DEPLOY_PATH }}
+
+      - name: Deploy the application
+        uses: appleboy/ssh-action@master
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOY_PATH
+          script: |
+            cd $DEPLOY_PATH
+            chmod +x $DEPLOY_PATH/.deploy/deploy-single.sh
+            $DEPLOY_PATH/.deploy/deploy-single.sh
