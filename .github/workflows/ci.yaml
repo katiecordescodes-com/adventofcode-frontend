@@ -70,7 +70,7 @@ jobs:
   deploy-single:
     runs-on: ubuntu-latest
     environment: Production
-    #needs: ['build', 'deploy-env']
+    needs: ['build', 'deploy-env']
 
     steps:
       - name: Checkout code
