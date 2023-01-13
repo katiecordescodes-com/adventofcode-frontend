@@ -24,6 +24,7 @@ jobs:
     with:
       DOCKER_COMPOSE_FILES: $DOCKER_COMPOSE_FILES
       DEPLOY_ENVIRONMENT: Production
+      ENV_FILE: .env.prod
     secrets:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
