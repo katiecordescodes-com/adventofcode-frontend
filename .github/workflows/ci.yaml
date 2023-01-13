@@ -20,7 +20,7 @@ jobs:
   build:
     uses: katharinegillis/github-workflows/.github/workflows/ci-build.yml@main
     with:
-      DOCKER_COMPOSE_FILES: -f compose.yml -f compose.prod.yml
+      DOCKER_COMPOSE_FILES: -f compose.yaml -f compose.prod.yaml
       DEPLOY_ENVIRONMENT: Production
     secrets:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
