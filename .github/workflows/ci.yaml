@@ -15,12 +15,14 @@ on:
 
 env:
   DOCKER_COMPOSE_FILES: -f compose.yaml -f compose.prod.yaml
+  DOCKER_COMPOSE_PROJECT: katiecordescodes-adventofcode-frontend
+  SERVICE_NAME: nextjs
 
 jobs:
   build:
     uses: katharinegillis/github-workflows/.github/workflows/ci-build.yml@main
     with:
-      DOCKER_COMPOSE_FILES: -f compose.yaml -f compose.prod.yaml
+      DOCKER_COMPOSE_FILES: ${{ env.DOCKER_COMPOSE_FILES }}
       DEPLOY_ENVIRONMENT: Production
     secrets:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
@@ -88,6 +90,8 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DOCKER_COMPOSE_PROJECT: ${{ env.DOCKER_COMPOSE_PROJECT }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -96,4 +100,4 @@ jobs:
           script: |
             cd $DEPLOY_PATH
             chmod +x $DEPLOY_PATH/.deploy/deploy-single.sh
-            $DEPLOY_PATH/.deploy/deploy-single.sh
+            $DEPLOY_PATH/.deploy/deploy-single.sh $DOCKER_COMPOSE_PROJECT $SERVICE_NAME
