@@ -21,14 +21,30 @@ env:
 
 jobs:
   build:
-    uses: katharinegillis/github-workflows/.github/workflows/ci-build.yml@main
-    with:
-      DOCKER_COMPOSE_FILES: $DOCKER_COMPOSE_FILES
-      DEPLOY_ENVIRONMENT: Production
-      ENV_FILE: .env.prod
-    secrets:
-      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build the environment file
+        uses: danielr1996/envsubst-action@1.0.0
+        with:
+          input: .env.prod
+          output: .env
+
+      - name: Build the image(s)
+        run: docker compose ${{ env.DOCKER_COMPOSE_FILES }} build
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push up the image(s)
+        run: docker compose ${{ env.DOCKER_COMPOSE_FILES }} push
 
   deploy-env:
     runs-on: ubuntu-latest
@@ -70,15 +86,37 @@ jobs:
 
   deploy-single:
     needs: ['build', 'deploy-env']
-    uses: katharinegillis/github-workflows/.github/workflows/ci-deploy-single.yml@main
-    with:
-      DOCKER_COMPOSE_FILES_LIST: $DOCKER_COMPOSE_FILES_LIST
-      DEPLOY_ENVIRONMENT: Production
-      DOCKER_COMPOSE_PROJECT: $DOCKER_COMPOSE_PROJECT
-      SERVICE_NAME: $SERVICE_NAME
-      DOCKER_COMPOSE_FILES: $DOCKER_COMPOSE_FILES
-    secrets:
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_KEY: ${{ secrets.SSH_KEY }}
-      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Copy up the deployment files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ".deploy/deploy-single.sh,${{ env.DOCKER_COMPOSE_FILES_LIST }}"
+          target: ${{ secrets.DEPLOY_PATH }}
+
+      - name: Deploy the application
+        uses: appleboy/ssh-action@master
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DOCKER_COMPOSE_PROJECT: $DOCKER_COMPOSE_PROJECT
+          SERVICE_NAME: $SERVICE_NAME
+          DOCKER_COMPOSE_FILES: $DOCKER_COMPOSE_FILES
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOY_PATH,DOCKER_COMPOSE_PROJECT,SERVICE_NAME,DOCKER_COMPOSE_FILES
+          script: |
+            cd $DEPLOY_PATH
+            chmod +x $DEPLOY_PATH/.deploy/deploy-single.sh
+            $DEPLOY_PATH/.deploy/deploy-single.sh $DOCKER_COMPOSE_PROJECT $SERVICE_NAME "$DOCKER_COMPOSE_FILES"
