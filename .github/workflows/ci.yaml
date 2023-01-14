@@ -20,7 +20,7 @@ env:
   SERVICE_NAME: nextjs
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     environment: Production
 
@@ -46,62 +46,13 @@ jobs:
       - name: Push up the image(s)
         run: docker compose ${{ env.DOCKER_COMPOSE_FILES }} push
 
-  deploy-env:
-    runs-on: ubuntu-latest
-    environment: Production
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Build the environment file
-        uses: danielr1996/envsubst-action@1.0.0
-        with:
-          input: .env.prod
-          output: .env
-
-      - name: Ensure deploy path exists
-        uses: appleboy/ssh-action@master
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: DEPLOY_PATH
-          script: mkdir -p $DEPLOY_PATH
-
-      - name: Deploy the environment file
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: ".env"
-          target: ${{ secrets.DEPLOY_PATH }}
-
-      - name: Sleep to reset ssh connection
-        run: sleep 30
-
-  deploy-single:
-    needs: ['build', 'deploy-env']
-    runs-on: ubuntu-latest
-    environment: Production
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
       - name: Copy up the deployment files
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: ".deploy/deploy-single.sh,${{ env.DOCKER_COMPOSE_FILES_LIST }}"
+          source: ".env,.deploy/deploy-single.sh,${{ env.DOCKER_COMPOSE_FILES_LIST }}"
           target: ${{ secrets.DEPLOY_PATH }}
 
       - name: Deploy the application
