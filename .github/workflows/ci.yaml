@@ -14,8 +14,8 @@ on:
       - main
 
 env:
-  DOCKER_COMPOSE_FILES: -f compose.yaml -f compose.prod.yaml
-  DOCKER_COMPOSE_FILES_LIST: "compose.yaml,compose.prod.yaml"
+  DOCKER_COMPOSE_FILES: -f compose.yaml -f compose.prod.yaml -f compose.ssl.yaml
+  DOCKER_COMPOSE_FILES_LIST: "compose.yaml,compose.prod.yaml,compose.ssl.yaml"
   DOCKER_COMPOSE_PROJECT: katiecordescodes-adventofcode-frontend
   SERVICE_NAME: nextjs
 
