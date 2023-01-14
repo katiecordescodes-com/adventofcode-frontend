@@ -108,9 +108,9 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          DOCKER_COMPOSE_PROJECT: $DOCKER_COMPOSE_PROJECT
-          SERVICE_NAME: $SERVICE_NAME
-          DOCKER_COMPOSE_FILES: "${{ env.DOCKER_COMPOSE_FILES }}"
+          DOCKER_COMPOSE_PROJECT: ${{ env.DOCKER_COMPOSE_PROJECT }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          DOCKER_COMPOSE_FILES: ${{ env.DOCKER_COMPOSE_FILES }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -119,4 +119,4 @@ jobs:
           script: |
             cd $DEPLOY_PATH
             chmod +x $DEPLOY_PATH/.deploy/deploy-single.sh
-            $DEPLOY_PATH/.deploy/deploy-single.sh $DOCKER_COMPOSE_PROJECT $SERVICE_NAME $DOCKER_COMPOSE_FILES
+            $DEPLOY_PATH/.deploy/deploy-single.sh $DOCKER_COMPOSE_PROJECT $SERVICE_NAME "$DOCKER_COMPOSE_FILES"
