@@ -110,7 +110,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DOCKER_COMPOSE_PROJECT: $DOCKER_COMPOSE_PROJECT
           SERVICE_NAME: $SERVICE_NAME
-          DOCKER_COMPOSE_FILES: ${{ env.DOCKER_COMPOSE_FILES }}
+          DOCKER_COMPOSE_FILES: "${{ env.DOCKER_COMPOSE_FILES }}"
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
