@@ -72,7 +72,7 @@ jobs:
     needs: ['build', 'deploy-env']
     uses: katharinegillis/github-workflows/.github/workflows/ci-deploy-single.yml@main
     with:
-      DOCKER_COMPOSE_FILES_LIST: $DOCKER_COMPOSE_FILES
+      DOCKER_COMPOSE_FILES_LIST: $DOCKER_COMPOSE_FILES_LIST
       DEPLOY_ENVIRONMENT: Production
       DOCKER_COMPOSE_PROJECT: $DOCKER_COMPOSE_PROJECT
       SERVICE_NAME: $SERVICE_NAME
