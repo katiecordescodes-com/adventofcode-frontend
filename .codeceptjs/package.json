@@ -1,0 +1,14 @@
+{
+  "name": "katiecordescodes-adventofcode-frontend-acceptancetests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@codeceptjs/configure": "^0.10.0",
+    "@types/node": "18.11.18",
+    "codeceptjs": "^3.3.7",
+    "playwright": "^1.29.2",
+    "ts-node": "10.9.1",
+    "typescript": "4.9.4"
+  }
+}
