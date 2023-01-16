@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "(cd .codeceptjs && yarn install);",
+    "test-acceptance": "(cd .codeceptjs && $HOME/bin/lyarn run codeceptjs run)",
+    "test-acceptance-ci": "(cd .codeceptjs && $HOME/bin/lyarn run codeceptjs run-multiple parallel)"
   },
   "dependencies": {
     "@next/font": "13.1.1",
