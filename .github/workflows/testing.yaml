@@ -37,9 +37,5 @@ jobs:
           yarn run playwright install
           yarn run playwright install-deps
 
-      - name: Build and start the app
-        run: NEXT_TELEMETRY_DISABLED=1 yarn build && yarn start & sleep 10 && echo 'Done waiting'
-
-      - name: Run the tests
-        working-directory: .codeceptjs
-        run: yarn run codeceptjs run-multiple parallel
+      - name: Build and start the app and run the e2e tests
+        run: "NEXT_TELEMETRY_DISABLED=1 yarn build && yarn start & sleep 10 && cd .codeceptjs && yarn run codeceptjs -o '{ \"helpers\": { \"Playwright\": { \"url\": \"http://localhost:3000\" } } }' run-multiple parallel"
