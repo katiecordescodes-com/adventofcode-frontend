@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { createMocks } from 'node-mocks-http';
-import handler from '../ping';
+import handler from '../ping.api';
 
 describe('/api/ping', () => {
     it('should return successful', () => {
