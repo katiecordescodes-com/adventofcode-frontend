@@ -16,6 +16,11 @@ export const config: CodeceptJS.MainConfig = {
       browser: 'firefox'
     }
   },
+  plugins: {
+    screenshotOnFail: {
+      enabled: false,
+    }
+  },
   include: {
     I: './steps_file'
   },

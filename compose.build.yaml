@@ -1,6 +1,8 @@
 services:
   nextjs:
     image: kcordes/katiecordescodes-adventofcode-frontend-nextjs
+    environment:
+      NODE_ENV: production
     build:
       context: .
       dockerfile: .docker/nextjs.dockerfile

@@ -8,7 +8,7 @@
 
 # testing
 /coverage
-/.codeceptjs/.output
+/.codeceptjs/output
 
 # next.js
 /.next/
