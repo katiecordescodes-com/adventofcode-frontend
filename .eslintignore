@@ -3,3 +3,4 @@ jest.config.js
 next-env.d.ts
 pages/_app.tsx
 pages/_document.tsx
+coverage
