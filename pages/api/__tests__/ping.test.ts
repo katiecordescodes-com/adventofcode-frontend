@@ -1,16 +1,17 @@
 import '@testing-library/jest-dom';
 import { createMocks } from 'node-mocks-http';
+
 import handler from '../ping.api';
 
 describe('/api/ping', () => {
-    it('should return successful', () => {
-        const { req, res } = createMocks({
-            method: 'GET',
-        });
+  it('should return successful', () => {
+    const { req, res } = createMocks({
+      method: 'GET',
+    });
 
-        handler(req, res);
+    handler(req, res);
 
-        expect(res._getStatusCode()).toEqual(200);
-        expect(JSON.parse(res._getData())).toEqual('');
-    })
-})
+    expect(res._getStatusCode()).toEqual(200);
+    expect(JSON.parse(res._getData())).toEqual('');
+  });
+});
