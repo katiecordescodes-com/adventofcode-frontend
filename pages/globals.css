@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:300&amp;subset=latin,latin-ext');
+
+body {
+    background: #0f0f23;
+    color: #cccccc;
+    font-family: "Source Code Pro", monospace;
+    font-size: 14pt;
+    min-width: 60em;
+}
+
+header h1 a, header h1 span {
+    display: inline-block;
+    text-decoration: none;
+    color: #00cc00;
+    text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
+}
+
+header h1 a:hover, header h1 a:focus {
+    color: #99ff99;
+    text-shadow: 0 0 2px #99ff99, 0 0 5px #99ff99;
+}
+
+h1, h2 {
+    font-size: 1em;
+    font-weight: normal;
+}
+
+header {
+    white-space: nowrap;
+    cursor: default;
+}
+
+header, main {
+    -webkit-text-size-adjust: none;
+}
+
+a {
+    outline: 0;
+    text-decoration: none;
+    color: #009900;
+}
+
+a:hover, a:focus {
+    color: #99ff99;
+}
