@@ -26,8 +26,8 @@ const customJestConfig = {
   collectCoverageFrom: [
     'pages/**/*.ts',
     'pages/**/*.tsx',
-    '!pages/_app.tsx',
-    '!pages/_document.tsx',
+    '!pages/_app.page.tsx',
+    '!pages/_document.page.tsx',
     '!**/*.mockFactory.ts',
   ],
 }
