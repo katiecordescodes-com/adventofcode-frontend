@@ -35,7 +35,7 @@ jobs:
           output: .env
 
       - name: Build the image(s)
-        run: docker compose ${{ env.DOCKER_COMPOSE_FILES }} build
+        run: docker compose -f compose.build.yaml build
 
       - name: Log into Docker Hub
         uses: docker/login-action@v2

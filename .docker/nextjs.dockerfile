@@ -14,9 +14,7 @@ RUN yarn --frozen-lockfile
 COPY cache cache
 COPY pages pages
 COPY public public
-COPY styles styles
 COPY next.config.js next.config.js
-COPY next-env.d.ts next-env.d.ts
 COPY tsconfig.json tsconfig.json
 
 ENV NEXT_TELEMETRY_DISABLED 1
