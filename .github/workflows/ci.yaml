@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push up the image(s)
-        run: docker compose ${{ env.DOCKER_COMPOSE_FILES }} push
+        run: docker compose -f compose.build.yaml push
 
       - name: Copy up the deployment files
         uses: appleboy/scp-action@master
