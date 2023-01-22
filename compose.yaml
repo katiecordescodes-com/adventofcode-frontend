@@ -15,3 +15,5 @@ services:
 networks:
   traefik:
     external: true
+  default:
+    name: katiecordescodes-adventofcode
